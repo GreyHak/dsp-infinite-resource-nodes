@@ -12,10 +12,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BepInEx;
+using BepInEx.Logging;
+using HarmonyLib;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace DSPInfiniteResourceNodes
 {
-    public class DSPInfiniteResourceNodes
+    [BepInPlugin(pluginGuid, pluginName, pluginVersion)]
+    [BepInProcess("DSPGAME.exe")]
+    public class DSPInfiniteResourceNodes : BaseUnityPlugin
     {
+        public const string pluginGuid = "greyhak.dysonsphereprogram.infiniteresourcenodes";
+        public const string pluginName = "DSP Infinite Resource Nodes";
+        public const string pluginVersion = "1.0.0";
+        new internal static ManualLogSource Logger;
+        Harmony harmony;
+
+        public void Awake()
+        {
+            Logger = base.Logger;  // "C:\Program Files (x86)\Steam\steamapps\common\Dyson Sphere Program\BepInEx\LogOutput.log"
+
+            harmony = new Harmony(pluginGuid);
+            harmony.PatchAll(typeof(DSPInfiniteResourceNodes));
+
+            Logger.LogInfo("Initialization complete.");
+        }
     }
 }
