@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSPInfiniteResourceNodes", "DSPInfiniteResourceNodes.csproj", "{AE038210-D58B-47E3-A479-1DB53BDCC8BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE038210-D58B-47E3-A479-1DB53BDCC8BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE038210-D58B-47E3-A479-1DB53BDCC8BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE038210-D58B-47E3-A479-1DB53BDCC8BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE038210-D58B-47E3-A479-1DB53BDCC8BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4A8D1360-EC94-4AC2-B089-1D25EA5E54D7}
+	EndGlobalSection
+EndGlobal
