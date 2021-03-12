@@ -4,6 +4,8 @@
 
 With this mod resource nodes will produce unlimited resources.  Tired of node resource running out, and having to move and rebalance your miners?  If so, this mod's for you.  With this mod resource node functionality will work more like [Satisfactory](https://www.satisfactorygame.com/).
 
+This mod works with existing saves.  It is not necessary to generate a new world.
+
 The number of resource nodes will remain unchanged.  The rate at which you can pull resources out of a node is still limited.  This mod does not and will not change these game features.
 
 If you like this mod, please click the thumbs up at the [top of the page](https://dsp.thunderstore.io/package/GreyHak/DSP_Infinite_Resource_Nodes/) (next to the Total rating).  That would be a nice thank you for me, and help other people to find a mod you enjoy.
