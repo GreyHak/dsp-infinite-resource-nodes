@@ -111,26 +111,26 @@ namespace DSPInfiniteResourceNodes
                         ILProcessor ilProcessor = method.Body.GetILProcessor();
 
                         // Handles the node amount
-                        int instructionIdx_icarus1 = Find(method.Body.Instructions, new string[] {  // was 444, now 445
-                            // veinPool[num13].amount = veinPool[num13].amount - num12;
+                        int instructionIdx_icarus1 = Find(method.Body.Instructions, new string[] {  // was 444, 445, now 430
+                            // veinPool[num13].amount = veinPool[num13].amount - 1;
                             "ldfld System.Int32 VeinData::amount",
-                            "ldloc.s V_24",
+                            "ldc.i4.1",
                             "sub",
                             "stfld System.Int32 VeinData::amount"
                         });
 
                         // Handles the planet's total
-                        int instructionIdx_icarus2 = Find(method.Body.Instructions, new string[] {  // was 489, now 491
-                            // factory.planet.veinAmounts[(int)veinData.type] -= (long)num12;
+                        int instructionIdx_icarus2 = Find(method.Body.Instructions, new string[] {  // was 489, 491, now 476
+                            // factory.planet.veinAmounts[(int)veinData.type] -= 1L;
                             "ldloc.1",
                             "callvirt PlanetData PlanetFactory::get_planet()",
                             "ldfld System.Int64[] PlanetData::veinAmounts",
-                            "ldloca.s V_22",
+                            "ldloca.s V_21",
                             "ldfld EVeinType VeinData::type",
                             "ldelema System.Int64",
                             "dup",
                             "ldind.i8",
-                            "ldloc.s V_24",
+                            "ldc.i4.1",
                             "conv.i8",
                             "sub",
                             "stind.i8",
@@ -138,10 +138,10 @@ namespace DSPInfiniteResourceNodes
                         });
 
                         // Handles the total in the node group
-                        int instructionIdx_icarus3 = Find(method.Body.Instructions, new string[] {  // was 508, now 510
-                            // veinGroups[(int)groupIndex].amount = veinGroups[(int)groupIndex].amount - (long)num12;
+                        int instructionIdx_icarus3 = Find(method.Body.Instructions, new string[] {  // was 508, 510, now
+                            // veinGroups[(int)groupIndex].amount = veinGroups[(int)groupIndex].amount - 1L;
                             "ldfld System.Int64 PlanetData/VeinGroup::amount",
-                            "ldloc.s V_24",
+                            "ldc.i4.1",
                             "conv.i8",
                             "sub",
                             "stfld System.Int64 PlanetData/VeinGroup::amount"
