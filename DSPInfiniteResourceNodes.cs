@@ -39,14 +39,16 @@ namespace DSPInfiniteResourceNodes
 
                         ILProcessor ilProcessor = method.Body.GetILProcessor();
 
-                        int instructionIdx_miner1 = Find(method.Body.Instructions, new string[]{  // 186
+                        int instructionIdx_miner1 = Find(method.Body.Instructions, new string[]{  // 209
                             // veinPool[num2].amount = veinPool[num2].amount - 1;
-                            "ldfld System.Int32 VeinData::amount",
+                            "ldflda System.Int32 VeinData::amount",
+                            "dup",
+                            "ldind.i4",
                             "ldc.i4.1",  // Replace with ldc.i4.0
                             "sub",
-                            "stfld System.Int32 VeinData::amount"});
+                            "stind.i4"});
 
-                        int instructionIdx_miner2 = Find(method.Body.Instructions, new string[]{  // 204
+                        int instructionIdx_miner2 = Find(method.Body.Instructions, new string[]{  // 229
                             // factory.planet.veinAmounts[(int)veinPool[num].type] -= 1L;
                             "callvirt PlanetData PlanetFactory::get_planet()",
                             "ldfld System.Int64[] PlanetData::veinAmounts",
@@ -61,17 +63,19 @@ namespace DSPInfiniteResourceNodes
                             "conv.i8",
                             "sub"});
 
-                        int instructionIdx_miner3 = Find(method.Body.Instructions, new string[]{  // 226
+                        int instructionIdx_miner3 = Find(method.Body.Instructions, new string[]{  // 250
                             // veinGroups[(int)groupIndex].amount = veinGroups[(int)groupIndex].amount - 1L;
-                            "ldfld System.Int64 PlanetData/VeinGroup::amount",
+                            "ldflda System.Int64 PlanetData/VeinGroup::amount",
+                            "dup",
+                            "ldind.i8",
                             "ldc.i4.1",  // Replace with ldc.i4.0
                             "conv.i8",
                             "sub",
-                            "stfld System.Int64 PlanetData/VeinGroup::amount"});
+                            "stind.i8"});
 
-                        const int instructionOffset_miner1 = 1;
+                        const int instructionOffset_miner1 = 3;
                         const int instructionOffset_miner2 = 9;
-                        const int instructionOffset_miner3 = 1;
+                        const int instructionOffset_miner3 = 3;
 
                         //Logger.LogDebug($"miner1={instructionIdx_miner1}+{instructionOffset_miner1}={instructionIdx_miner1 + instructionOffset_miner1}");
                         //Logger.LogDebug($"miner2={instructionIdx_miner2}+{instructionOffset_miner2}={instructionIdx_miner2 + instructionOffset_miner2}");
@@ -111,21 +115,23 @@ namespace DSPInfiniteResourceNodes
                         ILProcessor ilProcessor = method.Body.GetILProcessor();
 
                         // Handles the node amount
-                        int instructionIdx_icarus1 = Find(method.Body.Instructions, new string[] {  // was 444, 445, now 430
+                        int instructionIdx_icarus1 = Find(method.Body.Instructions, new string[] {  // 423
                             // veinPool[num13].amount = veinPool[num13].amount - 1;
-                            "ldfld System.Int32 VeinData::amount",
+                            "ldflda System.Int32 VeinData::amount",
+                            "dup",
+                            "ldind.i4",
                             "ldc.i4.1",
                             "sub",
-                            "stfld System.Int32 VeinData::amount"
+                            "stind.i4"
                         });
 
                         // Handles the planet's total
-                        int instructionIdx_icarus2 = Find(method.Body.Instructions, new string[] {  // was 489, 491, now 476
+                        int instructionIdx_icarus2 = Find(method.Body.Instructions, new string[] {  // 469
                             // factory.planet.veinAmounts[(int)veinData.type] -= 1L;
                             "ldloc.1",
                             "callvirt PlanetData PlanetFactory::get_planet()",
                             "ldfld System.Int64[] PlanetData::veinAmounts",
-                            "ldloca.s V_21",
+                            "ldloc.s V_17",
                             "ldfld EVeinType VeinData::type",
                             "ldelema System.Int64",
                             "dup",
@@ -133,23 +139,24 @@ namespace DSPInfiniteResourceNodes
                             "ldc.i4.1",
                             "conv.i8",
                             "sub",
-                            "stind.i8",
-                            "ldloc.1"
+                            "stind.i8"
                         });
 
                         // Handles the total in the node group
-                        int instructionIdx_icarus3 = Find(method.Body.Instructions, new string[] {  // was 508, 510, now
+                        int instructionIdx_icarus3 = Find(method.Body.Instructions, new string[] {  // 487
                             // veinGroups[(int)groupIndex].amount = veinGroups[(int)groupIndex].amount - 1L;
-                            "ldfld System.Int64 PlanetData/VeinGroup::amount",
+                            "ldflda System.Int64 PlanetData/VeinGroup::amount",
+                            "dup",
+                            "ldind.i8",
                             "ldc.i4.1",
                             "conv.i8",
                             "sub",
-                            "stfld System.Int64 PlanetData/VeinGroup::amount"
+                            "stind.i8"
                         });
 
-                        const int instructionOffset_icarus1 = 2;
+                        const int instructionOffset_icarus1 = 4;
                         const int instructionOffset_icarus2 = 10;
-                        const int instructionOffset_icarus3 = 3;
+                        const int instructionOffset_icarus3 = 5;
 
                         //Logger.LogDebug($"icarus1={instructionIdx_icarus1}+{instructionOffset_icarus1}={instructionIdx_icarus1 + instructionOffset_icarus1}");
                         //Logger.LogDebug($"icarus2={instructionIdx_icarus2}+{instructionOffset_icarus2}={instructionIdx_icarus2 + instructionOffset_icarus2}");
