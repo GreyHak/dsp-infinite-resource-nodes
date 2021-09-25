@@ -23,6 +23,8 @@ This mod can also be installed using ebkr's [r2modman](https://dsp.thunderstore.
 The source code for this mod is available for download, review and forking on GitHub [here](https://github.com/GreyHak/dsp-infinite-resource-nodes) under the BSD 3 clause license.
 
 ## Change Log
+### v1.2.0
+ - Added support for infinite crude oil.
 ### v1.1.3
  - Will now run with Dyson Sphere Program 0.8.21.8562 update.
 ### v1.1.2

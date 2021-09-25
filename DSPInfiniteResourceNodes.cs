@@ -21,6 +21,7 @@ namespace DSPInfiniteResourceNodes
         public static ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource("DSP Infinite Resource Nodes");
 
         public const bool enableMinerPatchFlag = true;
+        public const bool enableOilPatchFlag = true;
         public const bool enableIcarusPatchFlag = true;
 
         public static void Patch(AssemblyDefinition assembly)
@@ -39,7 +40,7 @@ namespace DSPInfiniteResourceNodes
 
                         ILProcessor ilProcessor = method.Body.GetILProcessor();
 
-                        int instructionIdx_miner1 = Find(method.Body.Instructions, new string[]{  // 209
+                        int instructionIdx_miner1 = Find(method.Body.Instructions, 0, new string[]{  // 209
                             // veinPool[num2].amount = veinPool[num2].amount - 1;
                             "ldflda System.Int32 VeinData::amount",
                             "dup",
@@ -48,7 +49,7 @@ namespace DSPInfiniteResourceNodes
                             "sub",
                             "stind.i4"});
 
-                        int instructionIdx_miner2 = Find(method.Body.Instructions, new string[]{  // 229
+                        int instructionIdx_miner2 = Find(method.Body.Instructions, 0, new string[]{  // 229
                             // factory.planet.veinAmounts[(int)veinPool[num].type] -= 1L;
                             "callvirt PlanetData PlanetFactory::get_planet()",
                             "ldfld System.Int64[] PlanetData::veinAmounts",
@@ -63,7 +64,7 @@ namespace DSPInfiniteResourceNodes
                             "conv.i8",
                             "sub"});
 
-                        int instructionIdx_miner3 = Find(method.Body.Instructions, new string[]{  // 250
+                        int instructionIdx_miner3 = Find(method.Body.Instructions, 0, new string[]{  // 250
                             // veinGroups[(int)groupIndex].amount = veinGroups[(int)groupIndex].amount - 1L;
                             "ldflda System.Int64 PlanetData/VeinGroup::amount",
                             "dup",
@@ -98,6 +99,73 @@ namespace DSPInfiniteResourceNodes
                             Logger.LogInfo("Infinite resources patch applied for miners.");
                         }
 
+                        int oilStartPosition = Find(method.Body.Instructions, 0, new string[] { "ldsfld System.Single VeinData::oilSpeedMultiplier" });
+                        int instructionIdx_oil1 = -1;
+                        int instructionIdx_oil2 = -1;
+                        int instructionIdx_oil3 = -1;
+
+                        if (oilStartPosition != -1)
+                        {
+                            instructionIdx_oil1 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // 493
+                                // veinPool[num5].amount = veinPool[num5].amount - 1;
+                                "ldflda System.Int32 VeinData::amount",
+                                "dup",
+                                "ldind.i4",
+                                "ldc.i4.1",  // Replace with ldc.i4.0
+                                "sub",
+                                "stind.i4"});
+
+                            instructionIdx_oil2 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // 500
+                                // factory.planet.veinAmounts[(int)veinPool[num3].type] -= 1L;
+                                "callvirt PlanetData PlanetFactory::get_planet()",
+                                "ldfld System.Int64[] PlanetData::veinAmounts",
+                                "ldarg.2",
+                                "ldloc.s V_8",
+                                "ldelema VeinData",
+                                "ldfld EVeinType VeinData::type",
+                                "ldelema System.Int64",
+                                "dup",
+                                "ldind.i8",
+                                "ldc.i4.1",  // Replace with ldc.i4.0
+                                "conv.i8",
+                                "sub"});
+
+                            instructionIdx_oil3 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // 521
+                                // veinGroups3[(int)groupIndex3].amount = veinGroups3[(int)groupIndex3].amount - 1L;
+                                "ldflda System.Int64 PlanetData/VeinGroup::amount",
+                                "dup",
+                                "ldind.i8",
+                                "ldc.i4.1",  // Replace with ldc.i4.0
+                                "conv.i8",
+                                "sub",
+                                "stind.i8"});
+                        }
+
+                        const int instructionOffset_oil1 = 3;
+                        const int instructionOffset_oil2 = 9;
+                        const int instructionOffset_oil3 = 3;
+
+                        //Logger.LogDebug($"oil1={instructionIdx_oil1}+{instructionOffset_oil1}={instructionIdx_oil1 + instructionOffset_oil1}");
+                        //Logger.LogDebug($"oil2={instructionIdx_oil2}+{instructionOffset_oil2}={instructionIdx_oil2 + instructionOffset_oil2}");
+                        //Logger.LogDebug($"oil3={instructionIdx_oil3}+{instructionOffset_oil3}={instructionIdx_oil3 + instructionOffset_oil3}");
+
+                        if (instructionIdx_oil1 == -1 ||
+                            instructionIdx_oil2 == -1 ||
+                            instructionIdx_oil3 == -1 ||
+                            method.Body.Instructions[instructionIdx_oil1 + instructionOffset_oil1].OpCode != OpCodes.Ldc_I4_1 ||
+                            method.Body.Instructions[instructionIdx_oil2 + instructionOffset_oil2].OpCode != OpCodes.Ldc_I4_1 ||
+                            method.Body.Instructions[instructionIdx_oil3 + instructionOffset_oil3].OpCode != OpCodes.Ldc_I4_1)
+                        {
+                            Logger.LogError("ERROR: The Dyson Sphere Program appears to have been updated.  The Infinite Resource Nodes mod needs to be updated.  Until then oil extractors will consume crude oil seep resources.");
+                        }
+                        else if (enableOilPatchFlag)
+                        {
+                            ilProcessor.Replace(ilProcessor.Body.Instructions[instructionIdx_oil1 + instructionOffset_oil1], Instruction.Create(OpCodes.Ldc_I4_0));
+                            ilProcessor.Replace(ilProcessor.Body.Instructions[instructionIdx_oil2 + instructionOffset_oil2], Instruction.Create(OpCodes.Ldc_I4_0));
+                            ilProcessor.Replace(ilProcessor.Body.Instructions[instructionIdx_oil3 + instructionOffset_oil3], Instruction.Create(OpCodes.Ldc_I4_0));
+                            Logger.LogInfo("Infinite resources patch applied for crude oil extraction.");
+                        }
+
                         break;
                     }
                 }
@@ -115,7 +183,7 @@ namespace DSPInfiniteResourceNodes
                         ILProcessor ilProcessor = method.Body.GetILProcessor();
 
                         // Handles the node amount
-                        int instructionIdx_icarus1 = Find(method.Body.Instructions, new string[] {  // 423
+                        int instructionIdx_icarus1 = Find(method.Body.Instructions, 0, new string[] {  // 423
                             // veinPool[num13].amount = veinPool[num13].amount - 1;
                             "ldflda System.Int32 VeinData::amount",
                             "dup",
@@ -126,7 +194,7 @@ namespace DSPInfiniteResourceNodes
                         });
 
                         // Handles the planet's total
-                        int instructionIdx_icarus2 = Find(method.Body.Instructions, new string[] {  // 469
+                        int instructionIdx_icarus2 = Find(method.Body.Instructions, 0, new string[] {  // 469
                             // factory.planet.veinAmounts[(int)veinData.type] -= 1L;
                             "ldloc.1",
                             "callvirt PlanetData PlanetFactory::get_planet()",
@@ -143,7 +211,7 @@ namespace DSPInfiniteResourceNodes
                         });
 
                         // Handles the total in the node group
-                        int instructionIdx_icarus3 = Find(method.Body.Instructions, new string[] {  // 487
+                        int instructionIdx_icarus3 = Find(method.Body.Instructions, 0, new string[] {  // 487
                             // veinGroups[(int)groupIndex].amount = veinGroups[(int)groupIndex].amount - 1L;
                             "ldflda System.Int64 PlanetData/VeinGroup::amount",
                             "dup",
@@ -184,9 +252,9 @@ namespace DSPInfiniteResourceNodes
             }
         }
 
-        public static int Find(Mono.Collections.Generic.Collection<Instruction> haystack, string[] needle)
+        public static int Find(Mono.Collections.Generic.Collection<Instruction> haystack, int startPosition, string[] needle)
         {
-            for (int hIdx = 0; hIdx < haystack.Count - needle.Length; hIdx++)
+            for (int hIdx = startPosition; hIdx < haystack.Count - needle.Length; hIdx++)
             {
                 bool matchFlag = true;
                 for (int nIdx = 0; nIdx < needle.Length; nIdx++)
