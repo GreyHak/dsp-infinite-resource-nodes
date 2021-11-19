@@ -199,7 +199,7 @@ namespace DSPInfiniteResourceNodes
                             "ldloc.1",
                             "callvirt PlanetData PlanetFactory::get_planet()",
                             "ldfld System.Int64[] PlanetData::veinAmounts",
-                            "ldloc.s V_26",  // On 9/22/2021 only this number changed.
+                            "ldloc.s V_27",  // On 9/22/21 and 11/18/21 only this number changed.
                             "ldfld EVeinType VeinData::type",
                             "ldelema System.Int64",
                             "dup",
