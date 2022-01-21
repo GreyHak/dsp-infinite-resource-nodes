@@ -24,6 +24,10 @@ namespace DSPInfiniteResourceNodes
         public const bool enableOilPatchFlag = true;
         public const bool enableIcarusPatchFlag = true;
 
+        public const bool enableDebug_miner = false;
+        public const bool enableDebug_oil = false;
+        public const bool enableDebug_icarus = false;
+
         public static void Patch(AssemblyDefinition assembly)
         {
             if (assembly.MainModule != null)  // Assembly-CSharp.dll
@@ -33,23 +37,28 @@ namespace DSPInfiniteResourceNodes
                 {
                     if (method.Name == "InternalUpdate")
                     {
-                        /*for (int lineIdx = 0; lineIdx < method.Body.Instructions.Count; lineIdx++)
+                        if (enableDebug_miner || enableDebug_oil)
                         {
-                            Console.WriteLine($"MinerComponent.InternalUpdate:{lineIdx}: {method.Body.Instructions[lineIdx]}");
-                        }*/
+#pragma warning disable CS0162
+                            for (int lineIdx = 0; lineIdx < method.Body.Instructions.Count; lineIdx++)
+                            {
+                                Console.WriteLine($"MinerComponent.InternalUpdate:{lineIdx}: {method.Body.Instructions[lineIdx]}");
+                            }
+#pragma warning restore CS0162
+                        }
 
                         ILProcessor ilProcessor = method.Body.GetILProcessor();
 
-                        int instructionIdx_miner1 = Find(method.Body.Instructions, 0, new string[]{  // 209
+                        int instructionIdx_miner1 = Find(method.Body.Instructions, 0, new string[]{  // :224:
                             // veinPool[num2].amount = veinPool[num2].amount - 1;
                             "ldflda System.Int32 VeinData::amount",
                             "dup",
                             "ldind.i4",
-                            "ldc.i4.1",  // Replace with ldc.i4.0
+                            "ldloc.s V_7",
                             "sub",
                             "stind.i4"});
 
-                        int instructionIdx_miner2 = Find(method.Body.Instructions, 0, new string[]{  // 229
+                        int instructionIdx_miner2 = Find(method.Body.Instructions, 0, new string[]{  // :244:
                             // factory.planet.veinAmounts[(int)veinPool[num].type] -= 1L;
                             "callvirt PlanetData PlanetFactory::get_planet()",
                             "ldfld System.Int64[] PlanetData::veinAmounts",
@@ -60,16 +69,16 @@ namespace DSPInfiniteResourceNodes
                             "ldelema System.Int64",
                             "dup",
                             "ldind.i8",
-                            "ldc.i4.1",  // Replace with ldc.i4.0
+                            "ldloc.s V_7",
                             "conv.i8",
                             "sub"});
 
-                        int instructionIdx_miner3 = Find(method.Body.Instructions, 0, new string[]{  // 250
+                        int instructionIdx_miner3 = Find(method.Body.Instructions, 0, new string[]{  // :265:
                             // veinGroups[(int)groupIndex].amount = veinGroups[(int)groupIndex].amount - 1L;
                             "ldflda System.Int64 PlanetData/VeinGroup::amount",
                             "dup",
                             "ldind.i8",
-                            "ldc.i4.1",  // Replace with ldc.i4.0
+                            "ldloc.s V_7",
                             "conv.i8",
                             "sub",
                             "stind.i8"});
@@ -78,16 +87,21 @@ namespace DSPInfiniteResourceNodes
                         const int instructionOffset_miner2 = 9;
                         const int instructionOffset_miner3 = 3;
 
-                        //Logger.LogDebug($"miner1={instructionIdx_miner1}+{instructionOffset_miner1}={instructionIdx_miner1 + instructionOffset_miner1}");
-                        //Logger.LogDebug($"miner2={instructionIdx_miner2}+{instructionOffset_miner2}={instructionIdx_miner2 + instructionOffset_miner2}");
-                        //Logger.LogDebug($"miner3={instructionIdx_miner3}+{instructionOffset_miner3}={instructionIdx_miner3 + instructionOffset_miner3}");
+                        if (enableDebug_miner)
+                        {
+#pragma warning disable CS0162
+                            Logger.LogDebug($"miner1={instructionIdx_miner1}+{instructionOffset_miner1}={instructionIdx_miner1 + instructionOffset_miner1}");
+                            Logger.LogDebug($"miner2={instructionIdx_miner2}+{instructionOffset_miner2}={instructionIdx_miner2 + instructionOffset_miner2}");
+                            Logger.LogDebug($"miner3={instructionIdx_miner3}+{instructionOffset_miner3}={instructionIdx_miner3 + instructionOffset_miner3}");
+#pragma warning restore CS0162
+                        }
 
                         if (instructionIdx_miner1 == -1 ||
                             instructionIdx_miner2 == -1 ||
                             instructionIdx_miner3 == -1 ||
-                            method.Body.Instructions[instructionIdx_miner1 + instructionOffset_miner1].OpCode != OpCodes.Ldc_I4_1 ||
-                            method.Body.Instructions[instructionIdx_miner2 + instructionOffset_miner2].OpCode != OpCodes.Ldc_I4_1 ||
-                            method.Body.Instructions[instructionIdx_miner3 + instructionOffset_miner3].OpCode != OpCodes.Ldc_I4_1)
+                            method.Body.Instructions[instructionIdx_miner1 + instructionOffset_miner1].OpCode != OpCodes.Ldloc_S ||
+                            method.Body.Instructions[instructionIdx_miner2 + instructionOffset_miner2].OpCode != OpCodes.Ldloc_S ||
+                            method.Body.Instructions[instructionIdx_miner3 + instructionOffset_miner3].OpCode != OpCodes.Ldloc_S)
                         {
                             Logger.LogError("ERROR: The Dyson Sphere Program appears to have been updated.  The Infinite Resource Nodes mod needs to be updated.  Until then miners will consume node resources.");
                         }
@@ -106,36 +120,36 @@ namespace DSPInfiniteResourceNodes
 
                         if (oilStartPosition != -1)
                         {
-                            instructionIdx_oil1 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // 493
+                            instructionIdx_oil1 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :562:
                                 // veinPool[num5].amount = veinPool[num5].amount - 1;
                                 "ldflda System.Int32 VeinData::amount",
                                 "dup",
                                 "ldind.i4",
-                                "ldc.i4.1",  // Replace with ldc.i4.0
+                                "ldloc.s V_15",
                                 "sub",
                                 "stind.i4"});
 
-                            instructionIdx_oil2 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // 500
+                            instructionIdx_oil2 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :569:
                                 // factory.planet.veinAmounts[(int)veinPool[num3].type] -= 1L;
                                 "callvirt PlanetData PlanetFactory::get_planet()",
                                 "ldfld System.Int64[] PlanetData::veinAmounts",
                                 "ldarg.2",
-                                "ldloc.s V_8",
+                                "ldloc.s V_11",
                                 "ldelema VeinData",
                                 "ldfld EVeinType VeinData::type",
                                 "ldelema System.Int64",
                                 "dup",
                                 "ldind.i8",
-                                "ldc.i4.1",  // Replace with ldc.i4.0
+                                "ldloc.s V_15",
                                 "conv.i8",
                                 "sub"});
 
-                            instructionIdx_oil3 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // 521
+                            instructionIdx_oil3 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :590:
                                 // veinGroups3[(int)groupIndex3].amount = veinGroups3[(int)groupIndex3].amount - 1L;
                                 "ldflda System.Int64 PlanetData/VeinGroup::amount",
                                 "dup",
                                 "ldind.i8",
-                                "ldc.i4.1",  // Replace with ldc.i4.0
+                                "ldloc.s V_15",
                                 "conv.i8",
                                 "sub",
                                 "stind.i8"});
@@ -145,16 +159,21 @@ namespace DSPInfiniteResourceNodes
                         const int instructionOffset_oil2 = 9;
                         const int instructionOffset_oil3 = 3;
 
-                        //Logger.LogDebug($"oil1={instructionIdx_oil1}+{instructionOffset_oil1}={instructionIdx_oil1 + instructionOffset_oil1}");
-                        //Logger.LogDebug($"oil2={instructionIdx_oil2}+{instructionOffset_oil2}={instructionIdx_oil2 + instructionOffset_oil2}");
-                        //Logger.LogDebug($"oil3={instructionIdx_oil3}+{instructionOffset_oil3}={instructionIdx_oil3 + instructionOffset_oil3}");
+                        if (enableDebug_oil)
+                        {
+#pragma warning disable CS0162
+                            Logger.LogDebug($"oil1={instructionIdx_oil1}+{instructionOffset_oil1}={instructionIdx_oil1 + instructionOffset_oil1}");
+                            Logger.LogDebug($"oil2={instructionIdx_oil2}+{instructionOffset_oil2}={instructionIdx_oil2 + instructionOffset_oil2}");
+                            Logger.LogDebug($"oil3={instructionIdx_oil3}+{instructionOffset_oil3}={instructionIdx_oil3 + instructionOffset_oil3}");
+#pragma warning restore CS0162
+                        }
 
                         if (instructionIdx_oil1 == -1 ||
                             instructionIdx_oil2 == -1 ||
                             instructionIdx_oil3 == -1 ||
-                            method.Body.Instructions[instructionIdx_oil1 + instructionOffset_oil1].OpCode != OpCodes.Ldc_I4_1 ||
-                            method.Body.Instructions[instructionIdx_oil2 + instructionOffset_oil2].OpCode != OpCodes.Ldc_I4_1 ||
-                            method.Body.Instructions[instructionIdx_oil3 + instructionOffset_oil3].OpCode != OpCodes.Ldc_I4_1)
+                            method.Body.Instructions[instructionIdx_oil1 + instructionOffset_oil1].OpCode != OpCodes.Ldloc_S ||
+                            method.Body.Instructions[instructionIdx_oil2 + instructionOffset_oil2].OpCode != OpCodes.Ldloc_S ||
+                            method.Body.Instructions[instructionIdx_oil3 + instructionOffset_oil3].OpCode != OpCodes.Ldloc_S)
                         {
                             Logger.LogError("ERROR: The Dyson Sphere Program appears to have been updated.  The Infinite Resource Nodes mod needs to be updated.  Until then oil extractors will consume crude oil seep resources.");
                         }
@@ -175,10 +194,15 @@ namespace DSPInfiniteResourceNodes
                 {
                     if (method.Name == "GameTick")
                     {
-                        /*for (int lineIdx = 0; lineIdx < method.Body.Instructions.Count; lineIdx++)
+                        if (enableDebug_icarus)
                         {
-                            Console.WriteLine($"PlayerAction_Mine.GameTick:{lineIdx}: {method.Body.Instructions[lineIdx]}");
-                        }*/
+#pragma warning disable CS0162
+                            for (int lineIdx = 0; lineIdx < method.Body.Instructions.Count; lineIdx++)
+                            {
+                                Console.WriteLine($"PlayerAction_Mine.GameTick:{lineIdx}: {method.Body.Instructions[lineIdx]}");
+                            }
+#pragma warning restore CS0162
+                        }
 
                         ILProcessor ilProcessor = method.Body.GetILProcessor();
 
@@ -226,9 +250,14 @@ namespace DSPInfiniteResourceNodes
                         const int instructionOffset_icarus2 = 10;
                         const int instructionOffset_icarus3 = 5;
 
-                        //Logger.LogDebug($"icarus1={instructionIdx_icarus1}+{instructionOffset_icarus1}={instructionIdx_icarus1 + instructionOffset_icarus1}");
-                        //Logger.LogDebug($"icarus2={instructionIdx_icarus2}+{instructionOffset_icarus2}={instructionIdx_icarus2 + instructionOffset_icarus2}");
-                        //Logger.LogDebug($"icarus3={instructionIdx_icarus3}+{instructionOffset_icarus3}={instructionIdx_icarus3 + instructionOffset_icarus3}");
+                        if (enableDebug_icarus)
+                        {
+#pragma warning disable CS0162
+                            Logger.LogDebug($"icarus1={instructionIdx_icarus1}+{instructionOffset_icarus1}={instructionIdx_icarus1 + instructionOffset_icarus1}");
+                            Logger.LogDebug($"icarus2={instructionIdx_icarus2}+{instructionOffset_icarus2}={instructionIdx_icarus2 + instructionOffset_icarus2}");
+                            Logger.LogDebug($"icarus3={instructionIdx_icarus3}+{instructionOffset_icarus3}={instructionIdx_icarus3 + instructionOffset_icarus3}");
+#pragma warning restore CS0162
+                        }
 
                         if (instructionIdx_icarus1 == -1 ||
                             instructionIdx_icarus2 == -1 ||
