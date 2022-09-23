@@ -9,7 +9,9 @@
 
 using System;
 using System.Collections.Generic;
+using BepInEx;
 using BepInEx.Logging;
+using BepInEx.Configuration;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -20,16 +22,26 @@ namespace DSPInfiniteResourceNodes
         public static IEnumerable<string> TargetDLLs { get; } = new[] { "Assembly-CSharp.dll" };
         public static ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource("DSP Infinite Resource Nodes");
 
-        public const bool enableMinerPatchFlag = true;
-        public const bool enableOilPatchFlag = true;
-        public const bool enableIcarusPatchFlag = true;
+        public static ConfigEntry<bool> enableMinerPatchFlag;
+        public static ConfigEntry<bool> enableOilPatchFlag;
+        public static ConfigEntry<bool> enableIcarusPatchFlag;
 
         public const bool enableDebug_miner = false;
         public const bool enableDebug_oil = false;
         public const bool enableDebug_icarus = false;
 
+        public static void BindConfigs()
+        {
+            ConfigFile irConfig = new ConfigFile(Path.Combine(Paths.ConfigPath, "InfiniteResources.cfg"), true);
+       
+            enableMinerPatchFlag = irConfig.Bind<bool>("General", "EnableMinerPatchFlag", false, "Enable/Disable Infinite Ores.");
+            enableOilPatchFlag = irConfig.Bind<bool>("General", "EnableOilPatchFlag", true, "Enable/Disable Infinite Oil.");
+            enableIcarusPatchFlag = irConfig.Bind<bool>("General", "EnableIcarusPatchFlag", false, "Enable/Disable Infinite Icarus Mining.");
+        }
+        
         public static void Patch(AssemblyDefinition assembly)
         {
+            BindConfigs();
             if (assembly.MainModule != null)  // Assembly-CSharp.dll
             {
                 TypeDefinition minerComponent = assembly.MainModule.GetType("MinerComponent");
