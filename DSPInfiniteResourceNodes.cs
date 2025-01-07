@@ -8,6 +8,7 @@
 // Dyson Sphere Program is developed by Youthcat Studio and published by Gamera Game.
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Logging;
@@ -32,11 +33,10 @@ namespace DSPInfiniteResourceNodes
 
         public static void BindConfigs()
         {
-            ConfigFile irConfig = new ConfigFile(Path.Combine(Paths.ConfigPath, "InfiniteResources.cfg"), true);
-       
-            enableMinerPatchFlag = irConfig.Bind<bool>("General", "EnableMinerPatchFlag", false, "Enable/Disable Infinite Ores.");
+            ConfigFile irConfig = new ConfigFile(Path.Combine(Paths.ConfigPath, "greyhak.dysonsphereprogram.infiniteresources.cfg"), true);
+            enableMinerPatchFlag = irConfig.Bind<bool>("General", "EnableMinerPatchFlag", true, "Enable/Disable Infinite Ores.");
             enableOilPatchFlag = irConfig.Bind<bool>("General", "EnableOilPatchFlag", true, "Enable/Disable Infinite Oil.");
-            enableIcarusPatchFlag = irConfig.Bind<bool>("General", "EnableIcarusPatchFlag", false, "Enable/Disable Infinite Icarus Mining.");
+            enableIcarusPatchFlag = irConfig.Bind<bool>("General", "EnableIcarusPatchFlag", true, "Enable/Disable Infinite Icarus Mining.");
         }
         
         public static void Patch(AssemblyDefinition assembly)
@@ -61,7 +61,7 @@ namespace DSPInfiniteResourceNodes
 
                         ILProcessor ilProcessor = method.Body.GetILProcessor();
 
-                        int instructionIdx_miner1 = Find(method.Body.Instructions, 0, new string[]{  // :235:
+                        int instructionIdx_miner1 = Find(method.Body.Instructions, 0, new string[]{  // :246:
                             // veinPool[num5].amount = veinPool[num5].amount - num4;
                             "ldflda System.Int32 VeinData::amount",
                             "dup",
@@ -70,7 +70,7 @@ namespace DSPInfiniteResourceNodes
                             "sub",
                             "stind.i4"});
 
-                        int instructionIdx_miner3 = Find(method.Body.Instructions, 0, new string[]{  // :258:
+                        int instructionIdx_miner3 = Find(method.Body.Instructions, 0, new string[]{  // :269:
                             // veinGroups[num6].amount = veinGroups[num6].amount - (long)num4;
                             "ldflda System.Int64 VeinGroup::amount",
                             "dup",
@@ -98,7 +98,7 @@ namespace DSPInfiniteResourceNodes
                         {
                             Logger.LogError("ERROR: The Dyson Sphere Program appears to have been updated.  The Infinite Resource Nodes mod needs to be updated.  Until then miners will consume node resources.");
                         }
-                        else if (enableMinerPatchFlag)
+                        else if (enableMinerPatchFlag.Value)
                         {
                             ilProcessor.Replace(ilProcessor.Body.Instructions[instructionIdx_miner1 + instructionOffset_miner1], Instruction.Create(OpCodes.Ldc_I4_0));
                             ilProcessor.Replace(ilProcessor.Body.Instructions[instructionIdx_miner3 + instructionOffset_miner3], Instruction.Create(OpCodes.Ldc_I4_0));
@@ -111,21 +111,21 @@ namespace DSPInfiniteResourceNodes
 
                         if (oilStartPosition != -1)
                         {
-                            instructionIdx_oil1 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :553:
+                            instructionIdx_oil1 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :568:
                                 // veinPool[num13].amount = veinPool[num13].amount - num11;
                                 "ldflda System.Int32 VeinData::amount",
                                 "dup",
                                 "ldind.i4",
-                                "ldloc.s V_16",
+                                "ldloc.s V_18",
                                 "sub",
                                 "stind.i4"});
 
-                            instructionIdx_oil3 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :566:
+                            instructionIdx_oil3 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :581:
                                 // veinGroups2[(int)groupIndex2].amount = veinGroups2[(int)groupIndex2].amount - (long)num11;
                                 "ldflda System.Int64 VeinGroup::amount",
                                 "dup",
                                 "ldind.i8",
-                                "ldloc.s V_16",
+                                "ldloc.s V_18",
                                 "conv.i8",
                                 "sub",
                                 "stind.i8"});
@@ -149,7 +149,7 @@ namespace DSPInfiniteResourceNodes
                         {
                             Logger.LogError("ERROR: The Dyson Sphere Program appears to have been updated.  The Infinite Resource Nodes mod needs to be updated.  Until then oil extractors will consume crude oil seep resources.");
                         }
-                        else if (enableOilPatchFlag)
+                        else if (enableOilPatchFlag.Value)
                         {
                             ilProcessor.Replace(ilProcessor.Body.Instructions[instructionIdx_oil1 + instructionOffset_oil1], Instruction.Create(OpCodes.Ldc_I4_0));
                             ilProcessor.Replace(ilProcessor.Body.Instructions[instructionIdx_oil3 + instructionOffset_oil3], Instruction.Create(OpCodes.Ldc_I4_0));
@@ -218,7 +218,7 @@ namespace DSPInfiniteResourceNodes
                         {
                             Logger.LogError("ERROR: The Dyson Sphere Program appears to have been updated.  The Infinite Resource Nodes mod needs to be updated.  Until then Icarus will consume node resources.");
                         }
-                        else if (enableIcarusPatchFlag)
+                        else if (enableIcarusPatchFlag.Value)
                         {
                             ilProcessor.Replace(ilProcessor.Body.Instructions[instructionIdx_icarus1 + instructionOffset_icarus1], Instruction.Create(OpCodes.Pop));
                             ilProcessor.Replace(ilProcessor.Body.Instructions[instructionIdx_icarus3 + instructionOffset_icarus3], Instruction.Create(OpCodes.Pop));
