@@ -13,7 +13,7 @@ If you like this mod, please click the thumbs up at the [top of the page](https:
 If you have issues with this mod, please report them on [GitHub](https://github.com/GreyHak/dsp-infinite-resource-nodes/issues).  You can also contact me at GreyHak#2995 on the [DSP Modding](https://discord.gg/XxhyTNte) Discord #tech-support channel.
 
 ## Installation
-This mod uses the BepInEx mod patch framework.  So BepInEx must be installed to use this mod.  Find details for installing BepInEx [in their user guide](https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html#installing-bepinex-1).  This mod was tested with BepInEx x64 5.4.23.2 and Dyson Sphere Program 0.10.31.24710 on Windows 11.
+This mod uses the BepInEx mod patch framework.  So BepInEx must be installed to use this mod.  Find details for installing BepInEx [in their user guide](https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html#installing-bepinex-1).  This mod was tested with BepInEx x64 5.4.23.2 and Dyson Sphere Program 0.10.32.25779 on Windows 11.
 
 To manually install this mod, add the `DSPInfiniteResourceNodes.dll` to your `%PROGRAMFILES(X86)%\Steam\steamapps\common\Dyson Sphere Program\BepInEx\patchers\` folder.
 
@@ -23,6 +23,8 @@ This mod can also be installed using ebkr's [r2modman](https://dsp.thunderstore.
 The source code for this mod is available for download, review and forking on GitHub [here](https://github.com/GreyHak/dsp-infinite-resource-nodes) under the BSD 3 clause license.
 
 ## Change Log
+### v1.2.5
+ - Will now run with Dyson Sphere Program 0.10.32.25779 update.
 ### v1.2.4
  - Will now run with Dyson Sphere Program 0.10.31.24710 update.
  - Support for config files added by [FlexibleGames](https://github.com/FlexibleGames)

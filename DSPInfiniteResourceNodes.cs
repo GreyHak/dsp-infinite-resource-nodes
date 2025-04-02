@@ -61,21 +61,21 @@ namespace DSPInfiniteResourceNodes
 
                         ILProcessor ilProcessor = method.Body.GetILProcessor();
 
-                        int instructionIdx_miner1 = Find(method.Body.Instructions, 0, new string[]{  // :246:
+                        int instructionIdx_miner1 = Find(method.Body.Instructions, 0, new string[]{  // :263:
                             // veinPool[num5].amount = veinPool[num5].amount - num4;
                             "ldflda System.Int32 VeinData::amount",
                             "dup",
                             "ldind.i4",
-                            "ldloc.s V_7",
+                            "ldloc.s V_8",
                             "sub",
                             "stind.i4"});
 
-                        int instructionIdx_miner3 = Find(method.Body.Instructions, 0, new string[]{  // :269:
+                        int instructionIdx_miner3 = Find(method.Body.Instructions, 0, new string[]{  // :2a1:
                             // veinGroups[num6].amount = veinGroups[num6].amount - (long)num4;
                             "ldflda System.Int64 VeinGroup::amount",
                             "dup",
                             "ldind.i8",
-                            "ldloc.s V_7",
+                            "ldloc.s V_8",
                             "conv.i8",
                             "sub",
                             "stind.i8"});
@@ -111,21 +111,21 @@ namespace DSPInfiniteResourceNodes
 
                         if (oilStartPosition != -1)
                         {
-                            instructionIdx_oil1 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :568:
+                            instructionIdx_oil1 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :563:
                                 // veinPool[num13].amount = veinPool[num13].amount - num11;
                                 "ldflda System.Int32 VeinData::amount",
                                 "dup",
                                 "ldind.i4",
-                                "ldloc.s V_18",
+                                "ldloc.s V_20",
                                 "sub",
                                 "stind.i4"});
 
-                            instructionIdx_oil3 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :581:
+                            instructionIdx_oil3 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :586:
                                 // veinGroups2[(int)groupIndex2].amount = veinGroups2[(int)groupIndex2].amount - (long)num11;
                                 "ldflda System.Int64 VeinGroup::amount",
                                 "dup",
                                 "ldind.i8",
-                                "ldloc.s V_18",
+                                "ldloc.s V_20",
                                 "conv.i8",
                                 "sub",
                                 "stind.i8"});
@@ -178,7 +178,7 @@ namespace DSPInfiniteResourceNodes
                         ILProcessor ilProcessor = method.Body.GetILProcessor();
 
                         // Handles the node amount
-                        int instructionIdx_icarus1 = Find(method.Body.Instructions, 0, new string[] {  // :638:
+                        int instructionIdx_icarus1 = Find(method.Body.Instructions, 0, new string[] {  // :701:
                             // veinPool[num16].amount = veinPool[num16].amount - 1;
                             "ldflda System.Int32 VeinData::amount",
                             "dup",
@@ -189,7 +189,7 @@ namespace DSPInfiniteResourceNodes
                         });
 
                         // Handles the total in the node group
-                        int instructionIdx_icarus3 = Find(method.Body.Instructions, 0, new string[] {  // :649:
+                        int instructionIdx_icarus3 = Find(method.Body.Instructions, 0, new string[] {  // :71d:
                             // veinGroups[(int)groupIndex].amount = veinGroups[(int)groupIndex].amount - 1L;
                             "ldflda System.Int64 VeinGroup::amount",
                             "dup",
