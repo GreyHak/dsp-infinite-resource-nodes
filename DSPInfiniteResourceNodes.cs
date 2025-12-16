@@ -111,21 +111,21 @@ namespace DSPInfiniteResourceNodes
 
                         if (oilStartPosition != -1)
                         {
-                            instructionIdx_oil1 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :563:
+                            instructionIdx_oil1 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :552:
                                 // veinPool[num13].amount = veinPool[num13].amount - num11;
                                 "ldflda System.Int32 VeinData::amount",
                                 "dup",
                                 "ldind.i4",
-                                "ldloc.s V_20",
+                                "ldloc.s V_21",
                                 "sub",
                                 "stind.i4"});
 
-                            instructionIdx_oil3 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :586:
+                            instructionIdx_oil3 = Find(method.Body.Instructions, oilStartPosition, new string[]{  // :565:
                                 // veinGroups2[(int)groupIndex2].amount = veinGroups2[(int)groupIndex2].amount - (long)num11;
                                 "ldflda System.Int64 VeinGroup::amount",
                                 "dup",
                                 "ldind.i8",
-                                "ldloc.s V_20",
+                                "ldloc.s V_21",
                                 "conv.i8",
                                 "sub",
                                 "stind.i8"});
